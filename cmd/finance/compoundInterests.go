@@ -4,25 +4,26 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/MakeNowJust/heredoc"
 	"github.com/spf13/cobra"
 )
 
 var compoundInterestsCmd = &cobra.Command{
 	Use:   "compoundinterests",
 	Short: "Calculates compound interests",
-	Long: `
-Calculates compound interests.
+	Long: heredoc.Doc(`
+		Calculates compound interests.
 
-The formula for compound interests is A = P * ((1 + r/n) ^ (n * t))
+		The formula for compound interests is A = P * ((1 + r/n) ^ (n * t))
 
-Where:
+		Where:
 
-A = the future value of the investment/loan, including interest
-P = the principal investment amount (the initial deposit or loan amount)
-r = the annual interest rate (decimal)
-n = the number of times that interest is compounded per unit t
-t = the time the money is invested or borrowed for
-`,
+		A = the future value of the investment/loan, including interest
+		P = the principal investment amount (the initial deposit or loan amount)
+		r = the annual interest rate (decimal)
+		n = the number of times that interest is compounded per unit t
+		t = the time the money is invested or borrowed for
+	`),
 	Run: func(cmd *cobra.Command, args []string) {
 		investAmount, _ := cmd.Flags().GetInt("invest-amount")
 		annualInterestRate, _ := cmd.Flags().GetFloat64("annual-interest-rate")

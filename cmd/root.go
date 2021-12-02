@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/MakeNowJust/heredoc"
 	"github.com/spf13/cobra"
 	"github.com/willful-it/life-utils/cmd/finance"
 
@@ -15,16 +16,16 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "life-utils",
 	Short: "Utility functions you'll use for life",
-	Long: `
-life-utils is a CLI to support your in several aspects of life when using 
-a computer.
+	Long: heredoc.Doc(`
+		life-utils is a CLI to support your in several aspects of life.
 
-Here you can find utility tools to:
-. Calculate compound interests
-. Generate UUIDs or nanoid
-. Etcetera
+		Here you can find utility tools to:
+		. Calculate compound interests
+		. Generate UUIDs or nanoid
+		. Etcetera
 
-Isn't that great?`,
+		Isn't that great?
+	`),
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
