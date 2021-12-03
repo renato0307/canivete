@@ -73,9 +73,9 @@ PowerShell:
 ```powershell
 PS> life-utils completion powershell | Out-String | Invoke-Expression
 
-  # To load completions for every new session, run:
-  PS> life-utils completion powershell > life-utils.ps1
-  # and source this file from your PowerShell profile.
+# To load completions for every new session, run:
+PS> life-utils completion powershell > life-utils.ps1
+# and source this file from your PowerShell profile.
 ```
 
 ## Development
