@@ -49,3 +49,11 @@ PowerShell:
   PS> life-utils completion powershell > life-utils.ps1
   # and source this file from your PowerShell profile.
 ```
+
+## Development
+
+Adding commands using cobra:
+
+```bash
+  $ ~/go/bin/cobra add <name>
+```
