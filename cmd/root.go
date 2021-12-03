@@ -21,9 +21,9 @@ import (
 	"os"
 
 	"github.com/MakeNowJust/heredoc"
+	"github.com/renato0307/canivete/cmd/finance"
+	"github.com/renato0307/canivete/cmd/programming"
 	"github.com/spf13/cobra"
-	"github.com/willful-it/life-utils/cmd/finance"
-	"github.com/willful-it/life-utils/cmd/programming"
 
 	"github.com/spf13/viper"
 )
@@ -31,10 +31,10 @@ import (
 var cfgFile string
 
 var rootCmd = &cobra.Command{
-	Use:   "life-utils",
+	Use:   "canivete",
 	Short: "Utility functions you'll use for life",
 	Long: heredoc.Doc(`
-		life-utils is a CLI to support your in several aspects of life.
+		canivete is a CLI to support your in several aspects of life.
 
 		Here you can find utility tools to:
 		. Calculate compound interests
@@ -54,7 +54,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.life-utils.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.canivete.yaml)")
 
 	rootCmd.AddCommand(finance.NewFinanceCmd())
 	rootCmd.AddCommand(programming.NewProgrammingCmd())
@@ -70,10 +70,10 @@ func initConfig() {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".life-utils" (without extension).
+		// Search config in home directory with name ".canivete" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".life-utils")
+		viper.SetConfigName(".canivete")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

@@ -1,10 +1,10 @@
-module github.com/willful-it/life-utils
+module github.com/renato0307/canivete
 
 go 1.17
 
 require (
 	github.com/MakeNowJust/heredoc v1.0.0
-	github.com/google/uuid v1.1.2
+	github.com/google/uuid v1.3.0
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0
 )
