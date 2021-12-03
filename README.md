@@ -1,5 +1,13 @@
-# life-utils
-Tools you'll use for life.
+# Canivete
+Multi-tools you'll use for life.
+
+
+## Origin
+
+"Canivete" is the Portuguese word for [pocketknife](https://pt.wikipedia.org/wiki/Canivete).
+
+Ths inspiration for the name came from multi-tools knifes like the Swiss Army knifes.
+
 
 ## Available commands
 
@@ -13,19 +21,19 @@ Tools you'll use for life.
 General help:
 
 ```zsh
-$ life-utils --help
+$ canivete --help
 ```
 
 Help for a group of commands:
 
 ```zsh
-$ life-utils <group name> --help
+$ canivete <group name> --help
 ```
 
 E.g.
 
 ```zsh
-$ life-utils finance --help
+$ canivete finance --help
 ```
 
 
@@ -34,15 +42,15 @@ $ life-utils finance --help
 Bash:
 
 ```bash
-$ source <(life-utils completion bash)
+$ source <(canivete completion bash)
 
 # To load completions for each session, execute once:
 
 # Linux:
-$ life-utils completion bash > /etc/bash_completion.d/life-utils
+$ canivete completion bash > /etc/bash_completion.d/canivete
 
 # macOS:
-$ life-utils completion bash > /usr/local/etc/bash_completion.d/life-utils
+$ canivete completion bash > /usr/local/etc/bash_completion.d/canivete
 ```
 
 Zsh:
@@ -54,7 +62,7 @@ Zsh:
 $ echo "autoload -U compinit; compinit" >> ~/.zshrc
 
 # To load completions for each session, execute once:
-$ life-utils completion zsh > "${fpath[1]}/_life-utils"
+$ canivete completion zsh > "${fpath[1]}/_canivete"
 
 # You will need to start a new shell for this setup to take effect.
 ```
@@ -62,19 +70,19 @@ $ life-utils completion zsh > "${fpath[1]}/_life-utils"
 fish:
 
 ```sh
-$ life-utils completion fish | source
+$ canivete completion fish | source
 
 # To load completions for each session, execute once:
-$ life-utils completion fish > ~/.config/fish/completions/life-utils.fish
+$ canivete completion fish > ~/.config/fish/completions/canivete.fish
 ```
 
 PowerShell:
 
 ```powershell
-PS> life-utils completion powershell | Out-String | Invoke-Expression
+PS> canivete completion powershell | Out-String | Invoke-Expression
 
 # To load completions for every new session, run:
-PS> life-utils completion powershell > life-utils.ps1
+PS> canivete completion powershell > canivete.ps1
 # and source this file from your PowerShell profile.
 ```
 

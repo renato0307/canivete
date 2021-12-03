@@ -19,7 +19,7 @@
 
 package main
 
-import "github.com/willful-it/life-utils/cmd"
+import "github.com/renato0307/canivete/cmd"
 
 func main() {
 	cmd.Execute()
