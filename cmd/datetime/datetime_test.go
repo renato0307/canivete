@@ -14,31 +14,25 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-package programming
+package datetime
 
 import (
-	"fmt"
+	"testing"
 
-	"github.com/MakeNowJust/heredoc"
-	"github.com/google/uuid"
 	"github.com/renato0307/canivete/pkg/iostreams"
-	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/assert"
 )
 
-func NewUuidCmd(iostreams iostreams.IOStreams) *cobra.Command {
-	var uuidCmd = &cobra.Command{
-		Use:   "uuid",
-		Short: "Generates UUIDs (or GUIDs)",
-		Long: heredoc.Doc(`
-			UUID also known as GUID is a 16 byte or 128-bit number.
-			It is meant to uniquely identify something.
-		`),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			_, err := fmt.Fprintln(iostreams.Out, uuid.New())
+func TestNewDatetimeCmd(t *testing.T) {
+	// arrange
+	iostreams, _, _, _ := iostreams.Test()
+	cmd := NewDatetimeCmd(*iostreams)
 
-			return err
-		},
-	}
+	// act
+	_, err := cmd.ExecuteC()
 
-	return uuidCmd
+	// assert
+	assert.NotNil(t, err)
+	assert.Contains(t, err.Error(), "must specify a subcommand")
+	assert.Len(t, cmd.Commands(), 3)
 }

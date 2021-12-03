@@ -4,7 +4,7 @@ Multi-tools you'll use for life.
 
 ## Origin
 
-"Canivete" is the Portuguese word for [pocketknife](https://pt.wikipedia.org/wiki/Canivete).
+"Canivete" is the Portuguese word for [pocket knife](https://pt.wikipedia.org/wiki/Canivete).
 
 Ths inspiration for the name came from multi-tools knifes like the Swiss Army knifes.
 
@@ -13,6 +13,7 @@ Ths inspiration for the name came from multi-tools knifes like the Swiss Army kn
 
 | Group | Name | Description  |
 |---|---|---|
+| datetime | fromunix  | Converts a Unix timestamp to human friendly format |
 | finance | compoundinterests  | Calculates compound interests  |
 | programming | uuid  | Generates UUIDs  |
 
