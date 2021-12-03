@@ -14,27 +14,25 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-package programming
+package finance
 
 import (
-	"fmt"
+	"testing"
 
 	"github.com/renato0307/canivete/pkg/iostreams"
-	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/assert"
 )
 
-func NewProgrammingCmd(iostreams iostreams.IOStreams) *cobra.Command {
+func TestNewFinanceCmd(t *testing.T) {
+	// arrange
+	iostreams, _, _, _ := iostreams.Test()
+	cmd := NewFinanceCmd(*iostreams)
 
-	var programmingCmd = &cobra.Command{
-		Use:   "programming",
-		Short: "Programming tools",
-		Long:  ``,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return fmt.Errorf("must specify a subcommand")
-		},
-	}
+	// act
+	_, err := cmd.ExecuteC()
 
-	programmingCmd.AddCommand(NewUuidCmd(iostreams))
-
-	return programmingCmd
+	// assert
+	assert.NotNil(t, err)
+	assert.Contains(t, err.Error(), "must specify a subcommand")
+	assert.Len(t, cmd.Commands(), 3)
 }

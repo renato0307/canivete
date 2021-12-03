@@ -14,27 +14,28 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-package programming
+package iostreams
 
 import (
-	"fmt"
-
-	"github.com/renato0307/canivete/pkg/iostreams"
-	"github.com/spf13/cobra"
+	"bytes"
+	"io"
+	"io/ioutil"
 )
 
-func NewProgrammingCmd(iostreams iostreams.IOStreams) *cobra.Command {
+type IOStreams struct {
+	In     io.ReadCloser
+	Out    io.Writer
+	ErrOut io.Writer
+}
 
-	var programmingCmd = &cobra.Command{
-		Use:   "programming",
-		Short: "Programming tools",
-		Long:  ``,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return fmt.Errorf("must specify a subcommand")
-		},
-	}
+func Test() (*IOStreams, *bytes.Buffer, *bytes.Buffer, *bytes.Buffer) {
+	in := &bytes.Buffer{}
+	out := &bytes.Buffer{}
+	errOut := &bytes.Buffer{}
 
-	programmingCmd.AddCommand(NewUuidCmd(iostreams))
-
-	return programmingCmd
+	return &IOStreams{
+		In:     ioutil.NopCloser(in),
+		Out:    out,
+		ErrOut: errOut,
+	}, in, out, errOut
 }
