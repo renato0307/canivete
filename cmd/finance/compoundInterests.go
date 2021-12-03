@@ -21,42 +21,44 @@ import (
 	"math"
 
 	"github.com/MakeNowJust/heredoc"
+	"github.com/renato0307/canivete/pkg/iostreams"
 	"github.com/spf13/cobra"
 )
 
-var compoundInterestsCmd = &cobra.Command{
-	Use:   "compoundinterests",
-	Short: "Calculates compound interests",
-	Long: heredoc.Doc(`
-		Calculates compound interests.
+func NewCompoundInterestsCmd(iostreams iostreams.IOStreams) *cobra.Command {
 
-		The formula for compound interests is A = P * ((1 + r/n) ^ (n * t))
+	var compoundInterestsCmd = &cobra.Command{
+		Use:   "compoundinterests",
+		Short: "Calculates compound interests",
+		Long: heredoc.Doc(`
+			Calculates compound interests.
+	
+			The formula for compound interests is A = P * ((1 + r/n) ^ (n * t))
+	
+			Where:
+	
+			A = the future value of the investment/loan, including interest
+			P = the principal investment amount (the initial deposit or loan amount)
+			r = the annual interest rate (decimal)
+			n = the number of times that interest is compounded per unit t
+			t = the time the money is invested or borrowed for
+		`),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			investAmount, _ := cmd.Flags().GetInt("invest-amount")
+			annualInterestRate, _ := cmd.Flags().GetFloat64("annual-interest-rate")
+			compoundPeriods, _ := cmd.Flags().GetInt("compound-periods")
+			time, _ := cmd.Flags().GetInt("time")
 
-		Where:
+			part1 := (1 + ((annualInterestRate / 100) / float64(compoundPeriods)))
+			part2 := float64(compoundPeriods * time)
+			result := float64(investAmount) * math.Pow(part1, part2)
+			roundedResult := math.Ceil(result*100) / 100
 
-		A = the future value of the investment/loan, including interest
-		P = the principal investment amount (the initial deposit or loan amount)
-		r = the annual interest rate (decimal)
-		n = the number of times that interest is compounded per unit t
-		t = the time the money is invested or borrowed for
-	`),
-	Run: func(cmd *cobra.Command, args []string) {
-		investAmount, _ := cmd.Flags().GetInt("invest-amount")
-		annualInterestRate, _ := cmd.Flags().GetFloat64("annual-interest-rate")
-		compoundPeriods, _ := cmd.Flags().GetInt("compound-periods")
-		time, _ := cmd.Flags().GetInt("time")
+			_, err := fmt.Fprintln(iostreams.Out, roundedResult)
 
-		part1 := (1 + ((annualInterestRate / 100) / float64(compoundPeriods)))
-		part2 := float64(compoundPeriods * time)
-		result := float64(investAmount) * math.Pow(part1, part2)
-		roundedResult := math.Ceil(result*100) / 100
-
-		fmt.Println(roundedResult)
-	},
-}
-
-func init() {
-	financeCmd.AddCommand(compoundInterestsCmd)
+			return err
+		},
+	}
 
 	compoundInterestsCmd.Flags().IntP("invest-amount", "p", 0, "the principal investment amount (the initial deposit or loan amount)")
 	compoundInterestsCmd.Flags().Float64P("annual-interest-rate", "r", 0.0, "the annual interest rate (decimal, percentage)")
@@ -67,4 +69,6 @@ func init() {
 	compoundInterestsCmd.MarkFlagRequired("annual-interest-rate")
 	compoundInterestsCmd.MarkFlagRequired("compound-periods")
 	compoundInterestsCmd.MarkFlagRequired("time")
+
+	return compoundInterestsCmd
 }

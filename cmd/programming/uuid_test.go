@@ -14,28 +14,26 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-package finance
+package programming
 
 import (
-	"fmt"
+	"testing"
 
 	"github.com/renato0307/canivete/pkg/iostreams"
-	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/assert"
 )
 
-func NewFinanceCmd(iostreams iostreams.IOStreams) *cobra.Command {
-	var financeCmd = &cobra.Command{
-		Use:   "finance",
-		Short: "Finance related tools",
-		Long:  ``,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			_, err := fmt.Fprintln(iostreams.Out, "Error: must also specify a command like compoundinterests, etc.")
+func TestNewUuidCmd(t *testing.T) {
+	// arrange
+	iostreams, _, out, _ := iostreams.Test()
+	cmd := NewUuidCmd(*iostreams)
 
-			return err
-		},
+	// act
+	_, err := cmd.ExecuteC()
+
+	// assert
+	if err != nil {
+		t.Fatal(err)
 	}
-
-	financeCmd.AddCommand(NewCompoundInterestsCmd(iostreams))
-
-	return financeCmd
+	assert.Contains(t, out.String(), "-")
 }

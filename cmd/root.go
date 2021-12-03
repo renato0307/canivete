@@ -23,6 +23,7 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	"github.com/renato0307/canivete/cmd/finance"
 	"github.com/renato0307/canivete/cmd/programming"
+	"github.com/renato0307/canivete/pkg/iostreams"
 	"github.com/spf13/cobra"
 
 	"github.com/spf13/viper"
@@ -56,8 +57,14 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.canivete.yaml)")
 
-	rootCmd.AddCommand(finance.NewFinanceCmd())
-	rootCmd.AddCommand(programming.NewProgrammingCmd())
+	iostreams := iostreams.IOStreams{
+		ErrOut: os.Stderr,
+		In:     os.Stdin,
+		Out:    os.Stdout,
+	}
+
+	rootCmd.AddCommand(finance.NewFinanceCmd(iostreams))
+	rootCmd.AddCommand(programming.NewProgrammingCmd(iostreams))
 }
 
 // initConfig reads in config file and ENV variables if set.

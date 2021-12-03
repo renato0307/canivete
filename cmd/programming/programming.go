@@ -19,21 +19,24 @@ package programming
 import (
 	"fmt"
 
+	"github.com/renato0307/canivete/pkg/iostreams"
 	"github.com/spf13/cobra"
 )
 
-var programmingCmd = &cobra.Command{
-	Use:   "programming",
-	Short: "Programming tools",
-	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Error: must also specify a command like uuid, etc.")
-	},
-}
+func NewProgrammingCmd(iostreams iostreams.IOStreams) *cobra.Command {
 
-func NewProgrammingCmd() *cobra.Command {
+	var programmingCmd = &cobra.Command{
+		Use:   "programming",
+		Short: "Programming tools",
+		Long:  ``,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			_, err := fmt.Fprintln(iostreams.Out, "Error: must also specify a command like uuid, etc.")
+
+			return err
+		},
+	}
+
+	programmingCmd.AddCommand(NewUuidCmd(iostreams))
+
 	return programmingCmd
-}
-
-func init() {
 }

@@ -14,28 +14,28 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-package finance
+package iostreams
 
 import (
-	"fmt"
-
-	"github.com/renato0307/canivete/pkg/iostreams"
-	"github.com/spf13/cobra"
+	"bytes"
+	"io"
+	"io/ioutil"
 )
 
-func NewFinanceCmd(iostreams iostreams.IOStreams) *cobra.Command {
-	var financeCmd = &cobra.Command{
-		Use:   "finance",
-		Short: "Finance related tools",
-		Long:  ``,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			_, err := fmt.Fprintln(iostreams.Out, "Error: must also specify a command like compoundinterests, etc.")
+type IOStreams struct {
+	In     io.ReadCloser
+	Out    io.Writer
+	ErrOut io.Writer
+}
 
-			return err
-		},
-	}
+func Test() (*IOStreams, *bytes.Buffer, *bytes.Buffer, *bytes.Buffer) {
+	in := &bytes.Buffer{}
+	out := &bytes.Buffer{}
+	errOut := &bytes.Buffer{}
 
-	financeCmd.AddCommand(NewCompoundInterestsCmd(iostreams))
-
-	return financeCmd
+	return &IOStreams{
+		In:     ioutil.NopCloser(in),
+		Out:    out,
+		ErrOut: errOut,
+	}, in, out, errOut
 }
