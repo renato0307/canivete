@@ -36,5 +36,5 @@ func TestNewUuidCmd(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Contains(t, out.String(), "Wed Dec  8 12:00:00 WET 2021")
+	assert.Contains(t, out.String(), "Wed Dec  8 12:00:00 UTC 2021")
 }

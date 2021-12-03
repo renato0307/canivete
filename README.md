@@ -13,7 +13,7 @@ Ths inspiration for the name came from multi-tools knifes like the Swiss Army kn
 
 | Group | Name | Description  |
 |---|---|---|
-| datetime | fromunix  | Converts an unix timestamp to human friendly format |
+| datetime | fromunix  | Converts a Unix timestamp to human friendly format |
 | finance | compoundinterests  | Calculates compound interests  |
 | programming | uuid  | Generates UUIDs  |
 

@@ -39,7 +39,7 @@ func NewFromUnixCmd(iostreams iostreams.IOStreams) *cobra.Command {
 
 			unixTime, _ := cmd.Flags().GetInt64("value")
 			t := time.Unix(unixTime, 0)
-			strDate := t.Format(time.UnixDate)
+			strDate := t.UTC().Format(time.UnixDate)
 			_, err := fmt.Fprintln(iostreams.Out, strDate)
 
 			return err
