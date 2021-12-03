@@ -29,9 +29,7 @@ func NewFinanceCmd(iostreams iostreams.IOStreams) *cobra.Command {
 		Short: "Finance related tools",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			_, err := fmt.Fprintln(iostreams.Out, "Error: must also specify a command like compoundinterests, etc.")
-
-			return err
+			return fmt.Errorf("must specify a subcommand")
 		},
 	}
 

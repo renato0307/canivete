@@ -35,7 +35,7 @@ var rootCmd = &cobra.Command{
 	Use:   "canivete",
 	Short: "Utility functions you'll use for life",
 	Long: heredoc.Doc(`
-		canivete is a CLI to support your in several aspects of life.
+		canivete is a CLI to support you everyday, making your like simpler.
 
 		Here you can find utility tools to:
 		. Calculate compound interests
