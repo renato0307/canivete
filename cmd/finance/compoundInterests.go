@@ -47,6 +47,10 @@ func NewCompoundInterestsCmd(iostreams iostreams.IOStreams) *cobra.Command {
 				m = the regular contribution
 				y = regular contributions in the compounded period
 		`),
+		Example: heredoc.Doc(`
+			canivete finance compoundinterests -t 25 -p 15000 -r 5 -n 12
+			canivete finance compoundinterests -t 25 -p 15000 -r 5 -n 1 -m 400 -y 12
+		`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			p, _ := getFlagIntAsFloat64(cmd, "invest-amount")
 			n, _ := getFlagIntAsFloat64(cmd, "compound-periods")
