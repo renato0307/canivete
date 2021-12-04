@@ -25,8 +25,8 @@ import (
 )
 
 type fromUnixOutput struct {
-	UnixTimestamp int64  `json:"unix"`
-	UtcTimestamp  string `json:"utc"`
+	UnixTimestamp int64
+	UtcTimestamp  string
 }
 
 func NewFromUnixCmd(iostreams iostreams.IOStreams) *cobra.Command {

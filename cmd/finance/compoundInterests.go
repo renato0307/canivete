@@ -25,8 +25,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type compoundInterestsDetailOutput struct {
+	FinalAmount        float64
+	TotalContributions float64
+	Interests          float64
+}
+
+type compoundInterestsHistoryEntryOutput struct {
+	Period string
+	Totals compoundInterestsDetailOutput
+}
+
 type compoundInterestsOutput struct {
-	FutureValue float64 `json:"futureValue"`
+	Total   compoundInterestsDetailOutput
+	History []compoundInterestsHistoryEntryOutput
 }
 
 const flagInvestAmount = "invest-amount"
@@ -127,8 +139,27 @@ func NewCompoundInterestsCmd(iostreams iostreams.IOStreams) *cobra.Command {
 }
 
 func run(p, n, t, m, y, rInt float64) compoundInterestsOutput {
+	output := compoundInterestsOutput{
+		Total:   compoundInterestsDetailOutput{},
+		History: []compoundInterestsHistoryEntryOutput{},
+	}
+
 	r := rInt / 100
 
+	output.Total = calculateValues(p, n, t, m, y, r)
+
+	// history
+	for i := 1; i <= int(t); i++ {
+		historyEntry := compoundInterestsHistoryEntryOutput{}
+		historyEntry.Totals = calculateValues(p, n, float64(i), m, y, r)
+		historyEntry.Period = fmt.Sprint(i)
+		output.History = append(output.History, historyEntry)
+	}
+
+	return output
+}
+
+func calculateValues(p, n, t, m, y, r float64) compoundInterestsDetailOutput {
 	// base calculation
 	a := p * math.Pow(1+r/n, n*t)
 
@@ -138,10 +169,13 @@ func run(p, n, t, m, y, rInt float64) compoundInterestsOutput {
 		aseries = m * (y / n) * ((math.Pow(1+r/n, n*t) - 1) / (r / n))
 	}
 
-	// total
-	total := roundTwoDecimalPlaces(a + aseries)
+	// set output
+	output := compoundInterestsDetailOutput{}
+	output.FinalAmount = roundTwoDecimalPlaces(a + aseries)
+	output.TotalContributions = roundTwoDecimalPlaces(p + (m * y * t))
+	output.Interests = roundTwoDecimalPlaces(output.FinalAmount - output.TotalContributions)
 
-	return compoundInterestsOutput{FutureValue: total}
+	return output
 }
 
 func getFlagIntAsFloat64(cmd *cobra.Command, name string) (float64, error) {

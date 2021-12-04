@@ -24,7 +24,7 @@ import (
 )
 
 type uuidOutput struct {
-	UUID string `json:"uuid"`
+	UUID string
 }
 
 func NewUuidCmd(iostreams iostreams.IOStreams) *cobra.Command {
