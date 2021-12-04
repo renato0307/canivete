@@ -33,7 +33,7 @@ func TestNewCompoundInterestsCmd(t *testing.T) {
 		"--time=10",
 		"--invest-amount=1000",
 		"--annual-interest-rate=5",
-		"--compound-periods=12",
+		"--compound-periods=1",
 	})
 	_, err := cmd.ExecuteC()
 
@@ -41,5 +41,28 @@ func TestNewCompoundInterestsCmd(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Contains(t, out.String(), "1647.01")
+	assert.Contains(t, out.String(), "1628.9")
+}
+
+func TestNewCompoundInterestsWithRegularContributionsCmd(t *testing.T) {
+	// arrange
+	iostreams, _, out, _ := iostreams.Test()
+	cmd := NewCompoundInterestsCmd(*iostreams)
+
+	// act
+	cmd.SetArgs([]string{
+		"-t=10",
+		"-p=5000",
+		"-r=5",
+		"-n=12",
+		"-m=100",
+		"-y=12",
+	})
+	_, err := cmd.ExecuteC()
+
+	// assert
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Contains(t, out.String(), "23763.28")
 }

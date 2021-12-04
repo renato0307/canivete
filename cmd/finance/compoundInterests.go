@@ -33,37 +33,84 @@ func NewCompoundInterestsCmd(iostreams iostreams.IOStreams) *cobra.Command {
 		Long: heredoc.Doc(`
 			Calculates compound interests.
 	
-			The formula for compound interests is A = P * ((1 + r/n) ^ (n * t))
+			The formula for compound interests is a = p*((1+r/n)^(n * t))
+			With different periodic payments an extra is needed:
+				a_series = m * (y/n) {[(1 + r/n)^(n * t) - 1] / (r/n)}
+				total = a + a_series
 	
 			Where:
-	
-			A = the future value of the investment/loan, including interest
-			P = the principal investment amount (the initial deposit or loan amount)
-			r = the annual interest rate (decimal)
-			n = the number of times that interest is compounded per unit t
-			t = the time the money is invested or borrowed for
+				a = the future value of the investment/loan, including interest
+				p = the principal investment amount (the initial deposit or loan amount)
+				r = the annual interest rate (decimal)
+				n = the number of times that interest is compounded per unit t
+				t = the time the money is invested or borrowed for
+				m = the regular contribution
+				y = regular contributions in the compounded period
+		`),
+		Example: heredoc.Doc(`
+			canivete finance compoundinterests -t 10 -p 1000 -r 5 -n 1
+			canivete finance compoundinterests -t 25 -p 15000 -r 5 -n 1 -m 400 -y 12
 		`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			investAmount, _ := cmd.Flags().GetInt("invest-amount")
-			annualInterestRate, _ := cmd.Flags().GetFloat64("annual-interest-rate")
-			compoundPeriods, _ := cmd.Flags().GetInt("compound-periods")
-			time, _ := cmd.Flags().GetInt("time")
+			p, _ := getFlagIntAsFloat64(cmd, "invest-amount")
+			n, _ := getFlagIntAsFloat64(cmd, "compound-periods")
+			t, _ := getFlagIntAsFloat64(cmd, "time")
+			m, _ := getFlagIntAsFloat64(cmd, "regular-contributions")
+			y, _ := getFlagIntAsFloat64(cmd, "regular-contributions-period")
+			rint, _ := cmd.Flags().GetFloat64("annual-interest-rate")
+			r := rint / 100
 
-			part1 := (1 + ((annualInterestRate / 100) / float64(compoundPeriods)))
-			part2 := float64(compoundPeriods * time)
-			result := float64(investAmount) * math.Pow(part1, part2)
-			roundedResult := math.Ceil(result*100) / 100
+			a := p * math.Pow(1+r/n, n*t)
+			aseries := 0.0
+			if m > 0 {
+				if y == 0 {
+					return fmt.Errorf("the regular-contributions-period cannot be zero")
+				}
+				aseries = m * (y / n) * ((math.Pow(1+r/n, n*t) - 1) / (r / n))
+			}
 
-			_, err := fmt.Fprintln(iostreams.Out, roundedResult)
+			total := a + aseries
+			_, err := fmt.Fprintln(iostreams.Out, math.Ceil(total*100)/100)
 
 			return err
 		},
 	}
 
-	compoundInterestsCmd.Flags().IntP("invest-amount", "p", 0, "the principal investment amount (the initial deposit or loan amount)")
-	compoundInterestsCmd.Flags().Float64P("annual-interest-rate", "r", 0.0, "the annual interest rate (decimal, percentage)")
-	compoundInterestsCmd.Flags().IntP("compound-periods", "n", 0, "the number of times that interest is compounded per unit t (e.g. 12 if monthly)")
-	compoundInterestsCmd.Flags().IntP("time", "t", 0, "the time the money is invested or borrowed for (e.g. 10 years)")
+	compoundInterestsCmd.Flags().IntP(
+		"invest-amount",
+		"p",
+		0,
+		"the principal investment amount (the initial deposit or loan amount)")
+
+	compoundInterestsCmd.Flags().Float64P(
+		"annual-interest-rate",
+		"r",
+		0,
+		"the annual interest rate (decimal, percentage)")
+
+	compoundInterestsCmd.Flags().IntP(
+		"compound-periods",
+		"n",
+		0,
+		"number of times interest compounds, i.e. 12 = monthly, 4 = quarterly, 2 = semi-annually, 1 = annually")
+
+	compoundInterestsCmd.Flags().IntP(
+		"time",
+		"t",
+		0,
+		"the time the money is invested or borrowed for (e.g. 10 years)")
+
+	compoundInterestsCmd.Flags().IntP(
+		"regular-contributions",
+		"m",
+		0,
+		"regular contributions (additional money added to investment)")
+
+	compoundInterestsCmd.Flags().IntP(
+		"regular-contributions-period",
+		"y",
+		12,
+		"regular contributions in the compounded period (e.g. 12 if every month in a year)")
 
 	compoundInterestsCmd.MarkFlagRequired("invest-amount")
 	compoundInterestsCmd.MarkFlagRequired("annual-interest-rate")
@@ -71,4 +118,9 @@ func NewCompoundInterestsCmd(iostreams iostreams.IOStreams) *cobra.Command {
 	compoundInterestsCmd.MarkFlagRequired("time")
 
 	return compoundInterestsCmd
+}
+
+func getFlagIntAsFloat64(cmd *cobra.Command, name string) (float64, error) {
+	valueInt, err := cmd.Flags().GetInt(name)
+	return float64(valueInt), err
 }
