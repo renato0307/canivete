@@ -25,8 +25,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type compoundInterestsOutput struct {
+	FutureValue float64 `json:"futureValue"`
+}
+
+const flagInvestAmount = "invest-amount"
+const flagCompoundPeriods = "compound-periods"
+const flagTime = "time"
+const flagRegularContributions = "regular-contributions"
+const flagRegularContributionsPeriod = "regular-contributions-period"
+const flagAnnualInterestRate = "annual-interest-rate"
+
 func NewCompoundInterestsCmd(iostreams iostreams.IOStreams) *cobra.Command {
 
+	// Command definition
 	var compoundInterestsCmd = &cobra.Command{
 		Use:   "compoundinterests",
 		Short: "Calculates compound interests",
@@ -52,75 +64,91 @@ func NewCompoundInterestsCmd(iostreams iostreams.IOStreams) *cobra.Command {
 			canivete finance compoundinterests -t 25 -p 15000 -r 5 -n 1 -m 400 -y 12
 		`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			p, _ := getFlagIntAsFloat64(cmd, "invest-amount")
-			n, _ := getFlagIntAsFloat64(cmd, "compound-periods")
-			t, _ := getFlagIntAsFloat64(cmd, "time")
-			m, _ := getFlagIntAsFloat64(cmd, "regular-contributions")
-			y, _ := getFlagIntAsFloat64(cmd, "regular-contributions-period")
-			rint, _ := cmd.Flags().GetFloat64("annual-interest-rate")
-			r := rint / 100
+			p, _ := getFlagIntAsFloat64(cmd, flagInvestAmount)
+			n, _ := getFlagIntAsFloat64(cmd, flagCompoundPeriods)
+			t, _ := getFlagIntAsFloat64(cmd, flagTime)
+			m, _ := getFlagIntAsFloat64(cmd, flagRegularContributions)
+			y, _ := getFlagIntAsFloat64(cmd, flagRegularContributionsPeriod)
+			rint, _ := cmd.Flags().GetFloat64(flagAnnualInterestRate)
 
-			a := p * math.Pow(1+r/n, n*t)
-			aseries := 0.0
-			if m > 0 {
-				if y == 0 {
-					return fmt.Errorf("the regular-contributions-period cannot be zero")
-				}
-				aseries = m * (y / n) * ((math.Pow(1+r/n, n*t) - 1) / (r / n))
+			if m > 0 && y == 0 {
+				return fmt.Errorf("the regular-contributions-period cannot be zero")
 			}
 
-			total := a + aseries
-			_, err := fmt.Fprintln(iostreams.Out, math.Ceil(total*100)/100)
+			output := run(p, n, t, m, y, rint)
+			err := iostreams.PrintOutput(output)
 
 			return err
 		},
 	}
 
+	// Command flags
 	compoundInterestsCmd.Flags().IntP(
-		"invest-amount",
+		flagInvestAmount,
 		"p",
 		0,
 		"the principal investment amount (the initial deposit or loan amount)")
+	compoundInterestsCmd.MarkFlagRequired(flagInvestAmount)
 
 	compoundInterestsCmd.Flags().Float64P(
-		"annual-interest-rate",
+		flagAnnualInterestRate,
 		"r",
 		0,
 		"the annual interest rate (decimal, percentage)")
+	compoundInterestsCmd.MarkFlagRequired(flagAnnualInterestRate)
 
 	compoundInterestsCmd.Flags().IntP(
-		"compound-periods",
+		flagCompoundPeriods,
 		"n",
 		0,
 		"number of times interest compounds, i.e. 12 = monthly, 4 = quarterly, 2 = semi-annually, 1 = annually")
+	compoundInterestsCmd.MarkFlagRequired(flagCompoundPeriods)
 
 	compoundInterestsCmd.Flags().IntP(
-		"time",
+		flagTime,
 		"t",
 		0,
 		"the time the money is invested or borrowed for (e.g. 10 years)")
+	compoundInterestsCmd.MarkFlagRequired(flagTime)
 
 	compoundInterestsCmd.Flags().IntP(
-		"regular-contributions",
+		flagRegularContributions,
 		"m",
 		0,
 		"regular contributions (additional money added to investment)")
 
 	compoundInterestsCmd.Flags().IntP(
-		"regular-contributions-period",
+		flagRegularContributionsPeriod,
 		"y",
 		12,
 		"regular contributions in the compounded period (e.g. 12 if every month in a year)")
 
-	compoundInterestsCmd.MarkFlagRequired("invest-amount")
-	compoundInterestsCmd.MarkFlagRequired("annual-interest-rate")
-	compoundInterestsCmd.MarkFlagRequired("compound-periods")
-	compoundInterestsCmd.MarkFlagRequired("time")
-
 	return compoundInterestsCmd
+}
+
+func run(p, n, t, m, y, rInt float64) compoundInterestsOutput {
+	r := rInt / 100
+
+	// base calculation
+	a := p * math.Pow(1+r/n, n*t)
+
+	// calculation for regular contributions
+	aseries := 0.0
+	if m > 0 {
+		aseries = m * (y / n) * ((math.Pow(1+r/n, n*t) - 1) / (r / n))
+	}
+
+	// total
+	total := roundTwoDecimalPlaces(a + aseries)
+
+	return compoundInterestsOutput{FutureValue: total}
 }
 
 func getFlagIntAsFloat64(cmd *cobra.Command, name string) (float64, error) {
 	valueInt, err := cmd.Flags().GetInt(name)
 	return float64(valueInt), err
+}
+
+func roundTwoDecimalPlaces(value float64) float64 {
+	return math.Ceil(value*100) / 100
 }

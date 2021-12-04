@@ -27,7 +27,7 @@ func NewDatetimeCmd(iostreams iostreams.IOStreams) *cobra.Command {
 
 	var datetimeCmd = &cobra.Command{
 		Use:   "datetime",
-		Short: "Date/time tools",
+		Short: "Date & time related tools",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("must specify a subcommand")

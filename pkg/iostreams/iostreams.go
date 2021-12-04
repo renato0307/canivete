@@ -18,6 +18,8 @@ package iostreams
 
 import (
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 )
@@ -38,4 +40,15 @@ func Test() (*IOStreams, *bytes.Buffer, *bytes.Buffer, *bytes.Buffer) {
 		Out:    out,
 		ErrOut: errOut,
 	}, in, out, errOut
+}
+
+func (iostreams *IOStreams) PrintOutput(v interface{}) error {
+	res, err := json.MarshalIndent(v, "", "  ")
+	if err != nil {
+		return fmt.Errorf(err.Error())
+	}
+
+	fmt.Fprintln(iostreams.Out, string(res))
+
+	return nil
 }
