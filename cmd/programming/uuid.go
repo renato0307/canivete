@@ -17,13 +17,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package programming
 
 import (
-	"fmt"
-
 	"github.com/MakeNowJust/heredoc"
 	"github.com/google/uuid"
 	"github.com/renato0307/canivete/pkg/iostreams"
 	"github.com/spf13/cobra"
 )
+
+type uuidOutput struct {
+	UUID string `json:"uuid"`
+}
 
 func NewUuidCmd(iostreams iostreams.IOStreams) *cobra.Command {
 	var uuidCmd = &cobra.Command{
@@ -34,8 +36,8 @@ func NewUuidCmd(iostreams iostreams.IOStreams) *cobra.Command {
 			It is meant to uniquely identify something.
 		`),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			_, err := fmt.Fprintln(iostreams.Out, uuid.New())
-
+			output := uuidOutput{UUID: uuid.New().String()}
+			err := iostreams.PrintOutput(output)
 			return err
 		},
 	}

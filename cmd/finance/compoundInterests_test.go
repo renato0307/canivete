@@ -23,7 +23,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewCompoundInterestsCmd(t *testing.T) {
+func TestCompoundInterestsCmd(t *testing.T) {
 	// arrange
 	iostreams, _, out, _ := iostreams.Test()
 	cmd := NewCompoundInterestsCmd(*iostreams)
@@ -44,7 +44,7 @@ func TestNewCompoundInterestsCmd(t *testing.T) {
 	assert.Contains(t, out.String(), "1628.9")
 }
 
-func TestNewCompoundInterestsWithRegularContributionsCmd(t *testing.T) {
+func TestCompoundInterestsWithRegularContributionsCmd(t *testing.T) {
 	// arrange
 	iostreams, _, out, _ := iostreams.Test()
 	cmd := NewCompoundInterestsCmd(*iostreams)
@@ -65,4 +65,25 @@ func TestNewCompoundInterestsWithRegularContributionsCmd(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.Contains(t, out.String(), "23763.28")
+}
+
+func TestCompoundInterestsWithRegularContributionsInvalidValuesCmd(t *testing.T) {
+	// arrange
+	iostreams, _, _, _ := iostreams.Test()
+	cmd := NewCompoundInterestsCmd(*iostreams)
+
+	// act
+	cmd.SetArgs([]string{
+		"-t=10",
+		"-p=5000",
+		"-r=5",
+		"-n=12",
+		"-m=100",
+		"-y=0", // this can't be zero
+	})
+	_, err := cmd.ExecuteC()
+
+	// assert
+	assert.NotNil(t, err)
+	assert.Contains(t, err.Error(), "the regular-contributions-period cannot be zero")
 }

@@ -17,13 +17,17 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package datetime
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/renato0307/canivete/pkg/iostreams"
 	"github.com/spf13/cobra"
 )
+
+type fromUnixOutput struct {
+	UnixTimestamp int64  `json:"unix"`
+	UtcTimestamp  string `json:"utc"`
+}
 
 func NewFromUnixCmd(iostreams iostreams.IOStreams) *cobra.Command {
 	var fromUnixCmd = &cobra.Command{
@@ -38,9 +42,8 @@ func NewFromUnixCmd(iostreams iostreams.IOStreams) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			unixTime, _ := cmd.Flags().GetInt64("value")
-			t := time.Unix(unixTime, 0)
-			strDate := t.UTC().Format(time.UnixDate)
-			_, err := fmt.Fprintln(iostreams.Out, strDate)
+			output := run(unixTime)
+			err := iostreams.PrintOutput(output)
 
 			return err
 		},
@@ -53,4 +56,11 @@ func NewFromUnixCmd(iostreams iostreams.IOStreams) *cobra.Command {
 	fromUnixCmd.MarkFlagRequired("value")
 
 	return fromUnixCmd
+}
+
+func run(unixTime int64) fromUnixOutput {
+	t := time.Unix(unixTime, 0)
+	strDate := t.UTC().Format(time.UnixDate)
+
+	return fromUnixOutput{UnixTimestamp: unixTime, UtcTimestamp: strDate}
 }
