@@ -23,6 +23,7 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	"github.com/renato0307/canivete/cmd/datetime"
 	"github.com/renato0307/canivete/cmd/finance"
+	"github.com/renato0307/canivete/cmd/internet"
 	"github.com/renato0307/canivete/cmd/programming"
 	"github.com/renato0307/canivete/pkg/iostreams"
 	"github.com/spf13/cobra"
@@ -66,6 +67,7 @@ func init() {
 	}
 
 	rootCmd.AddCommand(datetime.NewDatetimeCmd(iostreams))
+	rootCmd.AddCommand(internet.NewInternetCmd(iostreams))
 	rootCmd.AddCommand(finance.NewFinanceCmd(iostreams))
 	rootCmd.AddCommand(programming.NewProgrammingCmd(iostreams))
 }
