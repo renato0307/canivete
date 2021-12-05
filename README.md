@@ -13,9 +13,10 @@ Ths inspiration for the name came from multi-tools knifes like the Swiss Army kn
 
 | Group | Name | Description  |
 |---|---|---|
-| datetime | fromunix  | Converts a Unix timestamp to human friendly format |
-| finance | compoundinterests  | Calculates compound interests  |
-| programming | uuid  | Generates UUIDs  |
+| datetime | fromunix | Converts a Unix timestamp to human friendly format |
+| finance | compoundinterests | Calculates compound interests |
+| internet | medium2md | Converts a [Medium](https://medium.com) post to markdown |
+| programming | uuid | Generates UUIDs |
 
 ## Getting help
 
