@@ -118,8 +118,9 @@ func NewMediumToMdCmd(iostreams iostreams.IOStreams) *cobra.Command {
 			Inspiration: https://scribe.rip/faq
 		`),
 		Example: heredoc.Doc(`
-			canivete internet medium2md -i f744fbff033e
-			canivete internet medium2md -i f744fbff033e -f -d`),
+			canivete internet medium2md -i 4b63ff0e2bd3
+			canivete internet medium2md -i https://medium.com/@bradleyalanlaplante/heres-everything-i-do-when-setting-up-a-new-computer-4b63ff0e2bd3
+			canivete internet medium2md -i 4b63ff0e2bd3 -f -d`),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			postId, _ := cmd.Flags().GetString(flagId)
@@ -141,7 +142,9 @@ func NewMediumToMdCmd(iostreams iostreams.IOStreams) *cobra.Command {
 		flagId,
 		"i",
 		"",
-		"the identifier of the post (e.g c2c5e53a14d) - you can find this in the last part of a Medium URL")
+		heredoc.Doc(`the identifier of the post (e.g 4b63ff0e2bd3)
+			you can find this in the last part of a Medium URL or
+			use directly the Medium URL - check the examples`))
 	mediumToMdCmd.MarkFlagRequired(flagId)
 
 	mediumToMdCmd.Flags().BoolP(
@@ -163,18 +166,39 @@ func run(postId string, outputMdToFile bool, outputJsonToFile bool) (mediumToMdO
 
 	output := mediumToMdOutput{}
 
-	result := getPostData(postId, outputJsonToFile)
+	sanitizedPostId := sanitizePostId(postId)
+	result := getPostData(sanitizedPostId, outputJsonToFile)
 	output.Markdown = postToMarkdown(result)
-	output.PostId = postId
+	output.PostId = sanitizedPostId
 
 	if outputMdToFile {
-		err := ioutil.WriteFile(fmt.Sprintf("%s.md", postId), []byte(output.Markdown), fs.ModePerm)
+		err := ioutil.WriteFile(fmt.Sprintf("%s.md", sanitizedPostId), []byte(output.Markdown), fs.ModePerm)
 		if err != nil {
 			return output, err
 		}
 	}
 
 	return output, nil
+}
+
+// Sanitizes the post id
+// From the following URL extracts "4b63ff0e2bd3"
+// https://medium.com/@bradleyalanlaplante/heres-everything-i-do-when-setting-up-a-new-computer-4b63ff0e2bd3?source=email-bea602c1f3c7-1638752765617-digest.reader--4b63ff0e2bd3----1-72------------------462baf81_c223_437a_8412_a2811df1b2fe-28-
+func sanitizePostId(postId string) string {
+	if !strings.Contains(postId, "https") {
+		return postId
+	}
+
+	sanitizePostId := postId
+	if strings.Contains(sanitizePostId, "?") {
+		index := strings.Index(sanitizePostId, "?")
+		sanitizePostId = sanitizePostId[0:index]
+	}
+
+	splits := strings.Split(sanitizePostId, "-")
+	sanitizePostId = splits[len(splits)-1]
+
+	return sanitizePostId
 }
 
 func getPostData(postId string, outputJsonToFile bool) mediumPostResponse {
